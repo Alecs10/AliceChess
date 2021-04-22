@@ -1,0 +1,10 @@
+C:\Users\popa_\Desktop\Facultate\Proiecte\AliceChess\AliceChess\AliceChess\bin\Debug\AliceChess.exe.config
+C:\Users\popa_\Desktop\Facultate\Proiecte\AliceChess\AliceChess\AliceChess\bin\Debug\AliceChess.exe
+C:\Users\popa_\Desktop\Facultate\Proiecte\AliceChess\AliceChess\AliceChess\bin\Debug\AliceChess.pdb
+C:\Users\popa_\Desktop\Facultate\Proiecte\AliceChess\AliceChess\AliceChess\obj\Debug\AliceChess.csprojAssemblyReference.cache
+C:\Users\popa_\Desktop\Facultate\Proiecte\AliceChess\AliceChess\AliceChess\obj\Debug\AliceChess.Form1.resources
+C:\Users\popa_\Desktop\Facultate\Proiecte\AliceChess\AliceChess\AliceChess\obj\Debug\AliceChess.Properties.Resources.resources
+C:\Users\popa_\Desktop\Facultate\Proiecte\AliceChess\AliceChess\AliceChess\obj\Debug\AliceChess.csproj.GenerateResource.cache
+C:\Users\popa_\Desktop\Facultate\Proiecte\AliceChess\AliceChess\AliceChess\obj\Debug\AliceChess.csproj.CoreCompileInputs.cache
+C:\Users\popa_\Desktop\Facultate\Proiecte\AliceChess\AliceChess\AliceChess\obj\Debug\AliceChess.exe
+C:\Users\popa_\Desktop\Facultate\Proiecte\AliceChess\AliceChess\AliceChess\obj\Debug\AliceChess.pdb
