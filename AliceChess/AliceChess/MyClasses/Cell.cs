@@ -32,6 +32,10 @@ namespace AliceChess
             
                 this.Image = Pieces[(int)this.Piece.color][(int)this.Piece.type];
             }
+            else
+            {
+                this.Image = null;
+            }
 
 
         }

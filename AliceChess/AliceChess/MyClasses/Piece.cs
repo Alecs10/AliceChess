@@ -36,12 +36,14 @@ namespace AliceChess
         public PieceColor color;
         public int row;
         public int col;
+        public int table;
 
         public List<Tuple<int, int>> possibleMoves;
 
         public Piece()
         {
             possibleMoves = new List<Tuple<int, int>>();
+            table = 0;
         }
         public abstract void computePossibleMoves(Board board);
 

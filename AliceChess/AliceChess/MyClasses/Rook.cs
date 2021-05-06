@@ -19,6 +19,7 @@ namespace AliceChess
         public override void computePossibleMoves(Board board)
         {
 
+            this.possibleMoves.Clear();
             // bottom direction
 
             var temp = row+1;

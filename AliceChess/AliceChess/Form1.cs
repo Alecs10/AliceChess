@@ -15,10 +15,8 @@ namespace AliceChess
     {
 
         Game game = new Game();
-        public static bool turn = true; //true = white, false = black
-        public static bool move = false; // false = select a piece, true = select where to move the piece
 
-     
+
         public Form1()
         {
             InitializeComponent();
@@ -31,98 +29,58 @@ namespace AliceChess
             this.Controls.Add(game.chessboards[0].Backround);
             this.Controls.Add(game.chessboards[1].Backround);
 
-            Game.InitializeBoardBasedOnFEN("rnbqkbnr/pppppppp/2rR3/2QP4/4B3/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1", game.chessboards[0].Table);
+            Game.InitializeBoardBasedOnFEN("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1", game.chessboards[0].Table);
             Game.InitializeBoardBasedOnFEN("8/8/8/8/8/8/8/8", game.chessboards[1].Table);
-            EnableClick();
+            
+            EnableClick(game.getPiecesCoordinates(game.currentTurn),true);
 
 
         }
 
-        private void EnableClick()
-        {
+        //private void EnableClick()
+        //{
 
 
-            // Enable the click event for for all the pieces
-
-            for (int i = 0; i < 8; i++)
-            {
-
-                for (int j = 0; j < 8; j++)
-                {
-
-                    game.chessboards[0].Table[i][j].Click += chessBoard1PieceClick;
-
-                }
-            }
-
-            for (int i = 0; i < 8; i++)
-            {
-
-                for (int j = 0; j < 8; j++)
-                {
-
-                    game.chessboards[1].Table[i][j].Click += chessBoard1PieceClick;
-
-                }
-            }
-        }
-
-        //    // Remove the click event for the pieces you should not be able to click based on turn/move
+        //    // Enable the click event for for all the pieces
 
         //    for (int i = 0; i < 8; i++)
         //    {
+
         //        for (int j = 0; j < 8; j++)
         //        {
-        //            if (turn && !move) // if white has to pick a piece to move
+        //            if (game.chessboards[0].Table[i][j].containsPiece())
         //            {
-        //                if (Board.ChessBoard1[j, i].team != "white")
+        //                if (game.currentTurn == game.chessboards[0].Table[i][j].Piece.color)
         //                {
-        //                    Board.ChessBoard1[j, i].Click -= chessBoard1PieceClick;
-        //                    Board.ChessBoard2[j, i].Click -= chessBoard2PieceClick;
+        //                    game.chessboards[0].Table[i][j].Click += chessBoard1PieceClick;
         //                }
-
-        //                move = true;
-
         //            }
-        //            else if (turn && move) // if white has to pick where to move the already selected piece
-        //            {
-        //                if (Board.ChessBoard1[j, i].team == "white")
-        //                {
-        //                    Board.ChessBoard1[j, i].Click -= chessBoard1PieceClick;
-        //                    Board.ChessBoard2[j, i].Click -= chessBoard2PieceClick;
-        //                }
-
-        //                turn = false;
-        //                move = false;
-        //            }
-        //            else if (!turn && !move) // if black has to pick a piece to move
-        //            {
-        //                if (Board.ChessBoard1[j, i].team != "black")
-        //                {
-        //                    Board.ChessBoard1[j, i].Click -= chessBoard1PieceClick;
-        //                    Board.ChessBoard2[j, i].Click -= chessBoard2PieceClick;
-        //                }
 
 
-        //                move = true;
-        //            }
-        //            else if (!turn && move) // if black has to pick where to move the already selected piece
-        //            {
-        //                if (Board.ChessBoard1[j, i].team == "black")
-        //                {
-        //                    Board.ChessBoard1[j, i].Click -= chessBoard1PieceClick;
-        //                    Board.ChessBoard2[j, i].Click -= chessBoard2PieceClick;
-        //                }
 
-        //                turn = true;
-        //                move = false;
-        //            }
         //        }
         //    }
 
 
         //}
 
+        private void EnableClick(List<Tuple<int, int>> list, bool enable)
+        {
+            foreach (var item in list)
+            {
+                var row = item.Item1;
+                var col = item.Item2;
+
+                if (enable)
+                {
+                    game.chessboards[0].Table[row][col].Click += chessBoard1PieceClick;
+                }
+                else
+                {
+                    game.chessboards[0].Table[row][col].Click -= chessBoard1PieceClick;
+                }
+            }
+        }
 
         private void clearSelections()
         {
@@ -147,32 +105,62 @@ namespace AliceChess
                     if (game.chessboards[0].Table[row][col].Equals(sender))
                     {
 
-                        if (test.Piece != null)
+                        if (game.click)
                         {
-                            
-                            clearSelections();
-                            game.chessboards[0].Table[row][col].BorderStyle = BorderStyle.Fixed3D;
-                            test.Piece.col = col;
-                            test.Piece.row = row;
-                            test.Piece.computePossibleMoves(game.chessboards[0]);
-                            Game.displayPossibleMoves(test.Piece, game.chessboards[0]);
-                            
-                            //MessageBox.Show(test.Piece.positionX.ToString()+" "+ (test.Piece.positionY.ToString()));
+                            if (test.containsPiece())
+                            {
+                                clearSelections();
+                                test.Piece.row = row;
+                                test.Piece.col = col;
+                                game.chessboards[0].Table[test.Piece.row][test.Piece.col].BorderStyle = BorderStyle.Fixed3D;
+                               
+                                test.Piece.computePossibleMoves(game.chessboards[0]);
+                                game.possibleMoves = test.Piece.possibleMoves;
+                                game.displayPossibleMoves(game.chessboards[test.Piece.table]);
+                                game.tempCell = test;
+                                //MessageBox.Show(test.Piece.positionX.ToString()+" "+ (test.Piece.positionY.ToString()));
+                                game.click = !game.click;
+                                EnableClick(test.Piece.possibleMoves, true);
+                                EnableClick(game.getPiecesCoordinates(game.currentTurn), false);
+                                game.chessboards[0].Table[row][col].Click -= chessBoard1PieceClick;
+
+
+                            }
+
+
                         }
                         else
                         {
-                            MessageBox.Show("Empty");
+                            var oldRow = game.tempCell.Piece.row;
+                            var oldCol = game.tempCell.Piece.col;
+
+
+                            game.movePiece(oldRow, oldCol, row, col, 0);
+
+                            game.click = !game.click;
+                            clearSelections();
+                            EnableClick(test.Piece.possibleMoves, false);
+                            game.currentTurn = game.currentTurn == PieceColor.White ? PieceColor.Black : PieceColor.White;
+                            EnableClick(game.getPiecesCoordinates(game.currentTurn), true);
+
                         }
+
                     }
                 }
+
+
+               
+                
+
             }
 
         }
 
+
         public void chessBoard2PieceClick(object sender, EventArgs e)
         {
             Cell test = (Cell)sender;
-            
+
 
 
         }

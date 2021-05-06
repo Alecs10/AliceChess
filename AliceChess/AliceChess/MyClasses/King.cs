@@ -17,6 +17,7 @@ namespace AliceChess
 
         public override void computePossibleMoves(Board board)
         {
+            this.possibleMoves.Clear();
             var offsetsToCheck = new List<(int, int)>()
             {
                 (1, 0),

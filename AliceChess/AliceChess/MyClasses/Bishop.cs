@@ -18,7 +18,7 @@ namespace AliceChess
 
         public override void computePossibleMoves(Board board)
         {
-
+            this.possibleMoves.Clear();
             // NW direction
 
             var r = row-1;

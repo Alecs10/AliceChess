@@ -8,7 +8,7 @@ namespace AliceChess
 {
     class Pawn : Piece
     {
-        bool startingPosition;
+        public bool startingPosition;
 
         Pawn() {
            
@@ -22,6 +22,7 @@ namespace AliceChess
 
         public override void computePossibleMoves(Board board)
         {
+            this.possibleMoves.Clear();
 
             if (this.color == PieceColor.Black) // for the black pawns
             {
