@@ -15,7 +15,7 @@ namespace AliceChess
     {
 
         Game game = new Game();
-
+        Label currentColor = new Label();
 
         public Form1()
         {
@@ -24,45 +24,34 @@ namespace AliceChess
 
         private void Form1_Load(object sender, EventArgs e)
         {
-            this.BackColor = Color.Wheat;
-            this.Width = 950;
-            this.Controls.Add(game.chessboards[0].Backround);
-            this.Controls.Add(game.chessboards[1].Backround);
+            InitializeForm();
+            InitializeLabel();
 
-            Game.InitializeBoardBasedOnFEN("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1", game.chessboards[0].Table);
-            Game.InitializeBoardBasedOnFEN("8/8/8/8/8/8/8/8", game.chessboards[1].Table);
-            
             EnableClick(game.getPiecesCoordinates(game.currentTurn),true);
-
-
         }
 
-        //private void EnableClick()
-        //{
-
-
-        //    // Enable the click event for for all the pieces
-
-        //    for (int i = 0; i < 8; i++)
-        //    {
-
-        //        for (int j = 0; j < 8; j++)
-        //        {
-        //            if (game.chessboards[0].Table[i][j].containsPiece())
-        //            {
-        //                if (game.currentTurn == game.chessboards[0].Table[i][j].Piece.color)
-        //                {
-        //                    game.chessboards[0].Table[i][j].Click += chessBoard1PieceClick;
-        //                }
-        //            }
-
-
-
-        //        }
-        //    }
-
-
-        //}
+        private void InitializeForm()
+        {
+            this.BackColor = Color.Wheat;
+            this.Width = 915;
+            this.Controls.Add(game.chessboards[0].Backround);
+            this.Controls.Add(game.chessboards[1].Backround);
+        }
+        private void InitializeLabel()
+        {
+            this.currentColor.Location = new Point(412, 100);
+            this.currentColor.Text = game.currentTurn.ToString();
+            this.currentColor.Visible = true;
+            currentColor.Width = 75;
+            currentColor.Font= new System.Drawing.Font(currentColor.Font.Name, 16);
+            currentColor.TextAlign = ContentAlignment.MiddleCenter;
+            this.Controls.Add(currentColor);
+            
+        }
+        private void UpdateLabel()
+        {
+            this.currentColor.Text = game.currentTurn.ToString();
+        }
 
         private void EnableClick(List<Tuple<int, int>> list, bool enable)
         {
@@ -70,7 +59,6 @@ namespace AliceChess
             {
                 var row = item.Item1;
                 var col = item.Item2;
-
                 if (enable)
                 {
                     game.chessboards[0].Table[row][col].Click += chessBoard1PieceClick;
@@ -118,7 +106,7 @@ namespace AliceChess
                                 game.possibleMoves = test.Piece.possibleMoves;
                                 game.displayPossibleMoves(game.chessboards[test.Piece.table]);
                                 game.tempCell = test;
-                                //MessageBox.Show(test.Piece.positionX.ToString()+" "+ (test.Piece.positionY.ToString()));
+                                
                                 game.click = !game.click;
                                 EnableClick(test.Piece.possibleMoves, true);
                                 EnableClick(game.getPiecesCoordinates(game.currentTurn), false);
@@ -141,6 +129,7 @@ namespace AliceChess
                             clearSelections();
                             EnableClick(test.Piece.possibleMoves, false);
                             game.currentTurn = game.currentTurn == PieceColor.White ? PieceColor.Black : PieceColor.White;
+                            UpdateLabel();
                             EnableClick(game.getPiecesCoordinates(game.currentTurn), true);
 
                         }
@@ -156,13 +145,9 @@ namespace AliceChess
 
         }
 
-
         public void chessBoard2PieceClick(object sender, EventArgs e)
         {
             Cell test = (Cell)sender;
-
-
-
         }
     }
 }

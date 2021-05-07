@@ -24,9 +24,12 @@ namespace AliceChess
             currentTurn = PieceColor.White;
             click = true;
 
+            InitializeBoardBasedOnFEN("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1", chessboards[0].Table);
+            InitializeBoardBasedOnFEN("8/8/8/8/8/8/8/8", chessboards[1].Table);
+
         }
 
-        public static void InitializeBoardBasedOnFEN(string FENTable, Cell[][] table)
+        public void InitializeBoardBasedOnFEN(string FENTable, Cell[][] table)
         {
             char[] separators = new char[] { ' ' };
 
