@@ -9,7 +9,7 @@ namespace AliceChess
     class Rook : Piece
     {
 
-        Rook() { }
+        public Rook() { }
         public Rook(PieceColor col)
         {
             this.color = col;

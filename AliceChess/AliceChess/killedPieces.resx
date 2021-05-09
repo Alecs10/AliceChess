@@ -117,47 +117,4 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
-  <data name="backround" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\chess-black-king-in-check-mate-position-adrian-pope.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="CalAlb" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\CalAlb.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="CalNegru" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\CalNegru.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="chessBoard" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\chessBoard.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="NebunAlb" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\NebunAlb.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="NebunNegru" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\NebunNegru.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="PionAlb" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\PionAlb.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="PionNegru" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\PionNegru.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="RegeAlb" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\RegeAlb.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="RegeNegru" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\RegeNegru.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="ReginaAlba" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\ReginaAlba.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="ReginaNegru" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\ReginaNegru.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="TurnAlb" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\TurnAlb.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="TurnNegru" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\TurnNegru.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
 </root>

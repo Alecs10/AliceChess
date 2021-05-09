@@ -22,7 +22,7 @@ namespace AliceChess
        
     };
 
-    enum PieceColor
+    public enum PieceColor
     {
         White = 0,
         Black = 1,

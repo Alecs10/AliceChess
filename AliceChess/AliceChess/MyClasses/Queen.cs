@@ -8,7 +8,7 @@ namespace AliceChess
 {
     class Queen : Piece
     {
-        Queen() { }
+       public Queen() { }
         public Queen(PieceColor col)
         {
             this.color = col;

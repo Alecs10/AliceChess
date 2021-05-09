@@ -8,7 +8,7 @@ namespace AliceChess
 {
     class Knight : Piece
     {
-        Knight() { }
+        public Knight() { }
         public Knight(PieceColor col)
         {
             this.color = col;

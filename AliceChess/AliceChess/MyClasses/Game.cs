@@ -3,16 +3,22 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 
 namespace AliceChess
 {
     class Game
     {
-        public Board[] chessboards;
+        static public Board[] chessboards;
         public PieceColor currentTurn;
         public List<Tuple<int, int>> possibleMoves;
         public bool click;
         public Cell tempCell;
+        public static List<Piece> blackPiecesKilled;
+        public static List<Piece> whitePiecesKilled;
+        public static Piece selectedPiece;
+        public static int row, col;
+       
 
 
         public Game()
@@ -23,11 +29,16 @@ namespace AliceChess
             chessboards[1] = new Board(500, 0);
             currentTurn = PieceColor.White;
             click = true;
+            blackPiecesKilled = new List<Piece>();
+            whitePiecesKilled = new List<Piece>();
+            
 
             InitializeBoardBasedOnFEN("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1", chessboards[0].Table);
             InitializeBoardBasedOnFEN("8/8/8/8/8/8/8/8", chessboards[1].Table);
 
         }
+
+        
 
         public void InitializeBoardBasedOnFEN(string FENTable, Cell[][] table)
         {
@@ -140,19 +151,69 @@ namespace AliceChess
             }
         }
 
-        public void movePiece(int oldRow, int oldCol, int newRow, int newCol, int table)
+        public Piece movePiece(int oldRow, int oldCol, int newRow, int newCol, int table)
         {
+
 
             if (chessboards[table].Table[oldRow][oldCol].Piece is Pawn)
             {
                 ((Pawn)chessboards[table].Table[oldRow][oldCol].Piece).startingPosition = false;
             }
+
+            if (chessboards[table].Table[newRow][newCol].containsPiece() && !(chessboards[table].Table[newRow][newCol].Piece is Pawn))
+            {
+                if (chessboards[table].Table[newRow][newCol].Piece.color == PieceColor.Black)
+                {
+                    blackPiecesKilled.Add(chessboards[table].Table[newRow][newCol].Piece);
+                    
+                }
+                else
+                {
+                    whitePiecesKilled.Add(chessboards[table].Table[newRow][newCol].Piece);
+                }
+
+            }
+
+            
             chessboards[table].Table[newRow][newCol].Piece = chessboards[table].Table[oldRow][oldCol].Piece;
 
             chessboards[table].Table[oldRow][oldCol].Piece = null;
 
+            
+            if(chessboards[table].Table[newRow][newCol].Piece is Pawn)
+            {
+                if (chessboards[table].Table[newRow][newCol].Piece.color == PieceColor.Black)
+                {
+                    if (newRow == 7)
+                    {
+                        killedPieces kill = new killedPieces();
+                        Game.col = newCol;
+                        Game.row = newRow;
+                        kill.showKilledPieces(PieceColor.Black);
+
+                        
+
+                    }
+                }
+                else
+                {
+                    if (newRow == 0)
+                    {
+                        killedPieces kill = new killedPieces();
+                        Game.col = newCol;
+                        Game.row = newRow;
+                        kill.showKilledPieces(PieceColor.White);
+                        
+                    }
+                }
+                
+            }
+
+            
             chessboards[table].Table[oldRow][oldCol].LoadImage();
             chessboards[table].Table[newRow][newCol].LoadImage();
+            
+            return null;
         }
 
         public List<Tuple<int, int>> getPiecesCoordinates(PieceColor color)
@@ -182,5 +243,7 @@ namespace AliceChess
 
             return returnedIndexes;
         }
+
+        
     }
 }

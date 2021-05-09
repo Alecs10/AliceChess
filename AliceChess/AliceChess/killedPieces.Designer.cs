@@ -1,7 +1,7 @@
 ﻿
 namespace AliceChess
 {
-    partial class Form1
+    partial class killedPieces
     {
         /// <summary>
         /// Required designer variable.
@@ -31,14 +31,13 @@ namespace AliceChess
         {
             this.SuspendLayout();
             // 
-            // Form1
+            // killedPieces
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(800, 450);
-            this.Name = "Form1";
-            this.Text = "Form1";
-            this.Load += new System.EventHandler(this.Form1_Load);
+            this.ClientSize = new System.Drawing.Size(800, 61);
+            this.Name = "killedPieces";
+            this.Text = "killedPieces";
             this.ResumeLayout(false);
 
         }
@@ -46,4 +45,3 @@ namespace AliceChess
         #endregion
     }
 }
-
