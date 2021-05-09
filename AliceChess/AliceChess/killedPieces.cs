@@ -78,7 +78,19 @@ namespace AliceChess
             Game.selectedPiece.color = ((Cell)sender).Piece.color;
             Game.chessboards[0].Table[Game.row][Game.col].Piece = Game.selectedPiece;
             Game.chessboards[0].Table[Game.row][Game.col].LoadImage();
-            MessageBox.Show(Game.selectedPiece.row.ToString() + Game.selectedPiece.col.ToString());
+            
+            for(int i=0;i< Game.blackPiecesKilled.Count(); i++)
+            {
+                if (Game.blackPiecesKilled[i].Equals(((Cell)sender).Piece))
+                {
+                    Game.blackPiecesKilled.RemoveAt(i);
+                }
+                if (Game.whitePiecesKilled[i].Equals(((Cell)sender).Piece))
+                {
+                    Game.whitePiecesKilled.RemoveAt(i);
+                }
+            }
+            this.Close();
         }
 
 
