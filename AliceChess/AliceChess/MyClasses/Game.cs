@@ -31,15 +31,36 @@ namespace AliceChess
             click = true;
             blackPiecesKilled = new List<Piece>();
             whitePiecesKilled = new List<Piece>();
-            
 
+            InitializeKilledPieces();
             InitializeBoardBasedOnFEN("rnbqkbnr/pppppppp/8/4p3/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1", chessboards[0].Table);
             InitializeBoardBasedOnFEN("8/8/8/8/8/8/8/8", chessboards[1].Table);
 
         }
 
         
+        void InitializeKilledPieces()
+        {
+            Piece temp;
 
+            temp = new Knight(PieceColor.Black);
+            blackPiecesKilled.Add(temp);
+            temp = new Bishop(PieceColor.Black);
+            blackPiecesKilled.Add(temp);
+            temp = new Rook(PieceColor.Black);
+            blackPiecesKilled.Add(temp);
+            temp = new Queen(PieceColor.Black);
+            blackPiecesKilled.Add(temp);
+
+            temp = new Knight(PieceColor.White);
+            whitePiecesKilled.Add(temp);
+            temp = new Bishop(PieceColor.White);
+            whitePiecesKilled.Add(temp);
+            temp = new Rook(PieceColor.White);
+            whitePiecesKilled.Add(temp);
+            temp = new Queen(PieceColor.White);
+            whitePiecesKilled.Add(temp);
+        }
         public void InitializeBoardBasedOnFEN(string FENTable, Cell[][] table)
         {
             char[] separators = new char[] { ' ' };
@@ -160,19 +181,19 @@ namespace AliceChess
                 ((Pawn)chessboards[table].Table[oldRow][oldCol].Piece).startingPosition = false;
             }
 
-            if (chessboards[table].Table[newRow][newCol].containsPiece() && !(chessboards[table].Table[newRow][newCol].Piece is Pawn))
-            {
-                if (chessboards[table].Table[newRow][newCol].Piece.color == PieceColor.Black)
-                {
-                    blackPiecesKilled.Add(chessboards[table].Table[newRow][newCol].Piece);
+            //if (chessboards[table].Table[newRow][newCol].containsPiece() && !(chessboards[table].Table[newRow][newCol].Piece is Pawn))
+            //{
+            //    if (chessboards[table].Table[newRow][newCol].Piece.color == PieceColor.Black)
+            //    {
+            //        blackPiecesKilled.Add(chessboards[table].Table[newRow][newCol].Piece);
                     
-                }
-                else
-                {
-                    whitePiecesKilled.Add(chessboards[table].Table[newRow][newCol].Piece);
-                }
+            //    }
+            //    else
+            //    {
+            //        whitePiecesKilled.Add(chessboards[table].Table[newRow][newCol].Piece);
+            //    }
 
-            }
+            //}
 
             
             chessboards[table].Table[newRow][newCol].Piece = chessboards[table].Table[oldRow][oldCol].Piece;
