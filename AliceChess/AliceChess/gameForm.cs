@@ -96,7 +96,7 @@ namespace AliceChess
                 {
                     if (Game.chessboards[0].Table[row][col].Equals(sender))
                     {
-
+                        // MessageBox.Show(Game.chessboards[0].Table[row][col].Piece.row.ToString() + " " + Game.chessboards[0].Table[row][col].Piece.col.ToString());
                         if (game.click)
                         {
                             if (test.containsPiece())
@@ -135,6 +135,11 @@ namespace AliceChess
                             game.currentTurn = game.currentTurn == PieceColor.White ? PieceColor.Black : PieceColor.White;
                             UpdateLabel();
                             EnableClick(game.getPiecesCoordinates(game.currentTurn), true);
+                            
+                            if (game.checkKings())
+                            {
+                                MessageBox.Show("Sah");
+                            }
 
                         }
 
