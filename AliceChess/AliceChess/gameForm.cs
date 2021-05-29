@@ -91,14 +91,62 @@ namespace AliceChess
 
             Cell test = (Cell)sender;
             var possiblePiece = Game.selectedPiece;
+            
 
 
+            if (!game.click)
+            {
+                if (test.containsPiece()&& test.Piece.color.Equals(game.currentTurn))
+                {
+                    game.click = !game.click;
+                    //Game.chessboards[0].Table[test.Piece.row][test.Piece.col].Click += chessBoard1PieceClick;
+                    EnableClick(Game.tempCell.Piece.possibleMoves, false);
+                }
+                else
+                {
 
-            // MessageBox.Show(Game.chessboards[0].Table[row][col].Piece.row.ToString() + " " + Game.chessboards[0].Table[row][col].Piece.col.ToString());
-            if (game.click)
+
+                    var oldRow = Game.tempCell.Piece.row;
+                    var oldCol = Game.tempCell.Piece.col;
+                    int row = 0;
+                    int col = 0;
+
+                    for (int r = 0; r < 8; r++)
+                    {
+                        for (int c = 0; c < 8; c++) // Iterate through chess board
+                        {
+                            if (Game.chessboards[Game.tempCell.Piece.table].Table[r][c].Equals(sender)) // If the cell clicked is found
+                            {
+                                row = r;
+                                col = c;
+                            }
+                        }
+                    }
+
+
+                    game.movePiece(oldRow, oldCol, row, col, Game.tempCell.Piece.table);
+
+                    game.click = !game.click;
+                    clearSelections();
+                    EnableClick(game.possibleMoves, false);
+                    EnableClick(game.getPiecesCoordinates(game.currentTurn), false);
+                    game.currentTurn = game.currentTurn == PieceColor.White ? PieceColor.Black : PieceColor.White;
+                    UpdateLabel();
+                    EnableClick(game.getPiecesCoordinates(game.currentTurn), true);
+                    Game.chessboards[0].Table[oldRow][oldCol].Click -= chessBoard1PieceClick;
+                    if (game.checkKings())
+                    {
+                        MessageBox.Show("Sah");
+                    }
+                }
+
+
+            }
+            if(game.click)
             {
                 if (test.containsPiece())
                 {
+                    Game.selectedPieceColor = test.Piece.color;
                     clearSelections();
                     Game.chessboards[test.Piece.table].Table[test.Piece.row][test.Piece.col].BorderStyle = BorderStyle.Fixed3D;
 
@@ -110,46 +158,10 @@ namespace AliceChess
 
                     game.click = !game.click;
                     EnableClick(test.Piece.possibleMoves, true);
-                    EnableClick(game.getPiecesCoordinates(game.currentTurn), false);
-                    Game.chessboards[0].Table[test.Piece.row][test.Piece.col].Click -= chessBoard1PieceClick;
+                    //EnableClick(game.getPiecesCoordinates(game.currentTurn), false);
+                    //Game.chessboards[0].Table[test.Piece.row][test.Piece.col].Click -= chessBoard1PieceClick;
 
 
-                }
-
-
-            }
-            else
-            {
-                var oldRow = Game.tempCell.Piece.row;
-                var oldCol = Game.tempCell.Piece.col;
-                int row=0;
-                int col=0;
-
-                for (int r = 0; r < 8; r++)
-                {
-                    for (int c = 0; c < 8; c++) // Iterate through chess board
-                    {
-                        if (Game.chessboards[Game.tempCell.Piece.table].Table[r][c].Equals(sender)) // If the cell clicked is found
-                        {
-                            row = r;
-                            col = c;
-                        }
-                    }
-                }
-
-
-                game.movePiece(oldRow, oldCol, row, col, Game.tempCell.Piece.table);
-
-                game.click = !game.click;
-                clearSelections();
-                EnableClick(game.possibleMoves, false);
-                game.currentTurn = game.currentTurn == PieceColor.White ? PieceColor.Black : PieceColor.White;
-                UpdateLabel();
-                EnableClick(game.getPiecesCoordinates(game.currentTurn), true);
-
-                if (game.checkKings())
-                {
-                    MessageBox.Show("Sah");
                 }
 
             }

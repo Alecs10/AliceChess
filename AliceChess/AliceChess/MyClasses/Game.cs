@@ -21,6 +21,7 @@ namespace AliceChess
         public static int row, col;
         public static Tuple<int, int> blackKingCoordinates, whiteKingCoordinates;
         public Boolean check;
+        public static PieceColor selectedPieceColor;
 
 
 
