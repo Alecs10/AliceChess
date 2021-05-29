@@ -11,7 +11,7 @@ namespace AliceChess
     {
         static public Board[] chessboards;
         public PieceColor currentTurn;
-        public List<Tuple<int,int, int>> possibleMoves;
+        public List<Tuple<int, int, int>> possibleMoves;
         public bool click;
         public static Cell tempCell;
         public static int boardTemp;
@@ -19,7 +19,7 @@ namespace AliceChess
         public static List<Piece> whitePiecesKilled;
         public static Piece selectedPiece;
         public static int row, col;
-        public static Tuple<int, int> blackKingCoordinates, whiteKingCoordinates;
+        public static Tuple<int, int, int> blackKingCoordinates, whiteKingCoordinates;
         public Boolean check;
         public static PieceColor selectedPieceColor;
 
@@ -37,14 +37,14 @@ namespace AliceChess
             click = true;
             blackPiecesKilled = new List<Piece>();
             whitePiecesKilled = new List<Piece>();
-            blackKingCoordinates = Tuple.Create(0, 4);
-            whiteKingCoordinates = Tuple.Create(7, 4);
+            blackKingCoordinates = Tuple.Create(0, 0, 4);
+            whiteKingCoordinates = Tuple.Create(0, 7, 4);
             check = false;
 
 
 
             InitializeKilledPieces();
-            InitializeBoardBasedOnFEN("rnbqk2r/pppp1bpp/8/3p4/2p4n/1B6/1PPPPPPP/RNBQK1NR w KQkq - 0 1", chessboards[0].Table);
+            InitializeBoardBasedOnFEN("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1", chessboards[0].Table);
             InitializeBoardBasedOnFEN("8/8/8/8/8/8/8/8", chessboards[1].Table);
 
         }
@@ -206,11 +206,11 @@ namespace AliceChess
 
                 if (color == PieceColor.Black)
                 {
-                    blackKingCoordinates = Tuple.Create(newRow, newCol);
+                    blackKingCoordinates = Tuple.Create(nextTable, newRow, newCol);
                 }
                 else
                 {
-                    whiteKingCoordinates = Tuple.Create(newRow, newCol);
+                    whiteKingCoordinates = Tuple.Create(nextTable, newRow, newCol);
                 }
 
             }
@@ -286,42 +286,56 @@ namespace AliceChess
             {
                 for (int col = 0; col < 8; col++)
                 {
-                    for (int table = 0; table < 2; table++)
+
+                    if (chessboards[0].Table[row][col].containsPiece())
                     {
-                        if (chessboards[table].Table[row][col].containsPiece())
+                        if (chessboards[0].Table[row][col].Piece.color == color)
                         {
-                            if (chessboards[table].Table[row][col].Piece.color == color)
-                            {
-                                Tuple<int, int, int> coordinates = Tuple.Create(table, row, col);
-                                returnedIndexes.Add(coordinates);
-                            }
+                            Tuple<int, int, int> coordinates = Tuple.Create(0, row, col);
+                            returnedIndexes.Add(coordinates);
                         }
                     }
+                   
+                    if (chessboards[1].Table[row][col].containsPiece())
+                    {
+                        if (chessboards[1].Table[row][col].Piece.color == color)
+                        {
+                            Tuple<int, int, int> coordinates = Tuple.Create(1, row, col);
+                            returnedIndexes.Add(coordinates);
+                        }
+                    }
+
                 }
             }
-
             return returnedIndexes;
         }
 
 
         public Boolean checkKings()
         {
+
+            return (checkBlackKing() || checkWhiteKing());
+        }
+
+        public Boolean checkBlackKing()
+        {
+
             var flag = false;
             for (int row = 0; row < 8; row++)
             {
                 for (int col = 0; col < 8; col++)
                 {
-                    if (chessboards[0].Table[row][col].containsPiece())
+                    if (chessboards[blackKingCoordinates.Item1].Table[row][col].containsPiece())
                     {
-                        chessboards[0].Table[row][col].Piece.computePossibleMoves(Game.chessboards[0]);
-                        foreach (var move in chessboards[0].Table[row][col].Piece.possibleMoves)
+                        chessboards[blackKingCoordinates.Item1].Table[row][col].Piece.computePossibleMoves(Game.chessboards[blackKingCoordinates.Item1]);
+                        foreach (var move in chessboards[blackKingCoordinates.Item1].Table[row][col].Piece.possibleMoves)
                         {
-                            if (move.Equals(whiteKingCoordinates) || move.Equals(blackKingCoordinates))
+                            if (move.Equals(blackKingCoordinates))
                             {
                                 flag = true;
                             }
                         }
-                        chessboards[0].Table[row][col].Piece.possibleMoves.Clear();
+                        chessboards[blackKingCoordinates.Item1].Table[row][col].Piece.possibleMoves.Clear();
                     }
 
 
@@ -330,9 +344,35 @@ namespace AliceChess
 
             this.check = flag;
             return flag;
-
         }
 
+        public Boolean checkWhiteKing()
+        {
+            var flag = false;
+            for (int row = 0; row < 8; row++)
+            {
+                for (int col = 0; col < 8; col++)
+                {
+                    if (chessboards[whiteKingCoordinates.Item1].Table[row][col].containsPiece())
+                    {
+                        chessboards[whiteKingCoordinates.Item1].Table[row][col].Piece.computePossibleMoves(Game.chessboards[whiteKingCoordinates.Item1]);
+                        foreach (var move in chessboards[whiteKingCoordinates.Item1].Table[row][col].Piece.possibleMoves)
+                        {
+                            if (move.Equals(whiteKingCoordinates))
+                            {
+                                flag = true;
+                            }
+                        }
+                        chessboards[whiteKingCoordinates.Item1].Table[row][col].Piece.possibleMoves.Clear();
+                    }
+
+
+                }
+            }
+
+            this.check = flag;
+            return flag;
+        }
 
     }
 }
