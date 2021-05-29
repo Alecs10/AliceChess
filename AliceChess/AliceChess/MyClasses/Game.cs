@@ -295,7 +295,7 @@ namespace AliceChess
                             returnedIndexes.Add(coordinates);
                         }
                     }
-                   
+
                     if (chessboards[1].Table[row][col].containsPiece())
                     {
                         if (chessboards[1].Table[row][col].Piece.color == color)
@@ -313,13 +313,17 @@ namespace AliceChess
 
         public Boolean checkKings()
         {
-
-            return (checkBlackKing() || checkWhiteKing());
+            Boolean emptyList = true;
+            if ((checkBlackKing().Count != 0) || (checkWhiteKing().Count != 0))
+            {
+                emptyList = false;
+            }
+            return !emptyList;
         }
 
-        public Boolean checkBlackKing()
+        public List<Tuple<int, int, int>> checkBlackKing()
         {
-
+            List<Tuple<int, int, int>> piecesThatCheckTheBK = new List<Tuple<int, int, int>>();
             var flag = false;
             for (int row = 0; row < 8; row++)
             {
@@ -332,6 +336,7 @@ namespace AliceChess
                         {
                             if (move.Equals(blackKingCoordinates))
                             {
+                                piecesThatCheckTheBK.Add(Tuple.Create(chessboards[blackKingCoordinates.Item1].Table[row][col].Piece.table, chessboards[blackKingCoordinates.Item1].Table[row][col].Piece.row, chessboards[blackKingCoordinates.Item1].Table[row][col].Piece.col));
                                 flag = true;
                             }
                         }
@@ -343,11 +348,12 @@ namespace AliceChess
             }
 
             this.check = flag;
-            return flag;
+            return piecesThatCheckTheBK;
         }
 
-        public Boolean checkWhiteKing()
+        public List<Tuple<int, int, int>> checkWhiteKing()
         {
+            List<Tuple<int, int, int>> piecesThatCheckTheWK = new List<Tuple<int, int, int>>();
             var flag = false;
             for (int row = 0; row < 8; row++)
             {
@@ -360,6 +366,8 @@ namespace AliceChess
                         {
                             if (move.Equals(whiteKingCoordinates))
                             {
+
+                                piecesThatCheckTheWK.Add(Tuple.Create(chessboards[whiteKingCoordinates.Item1].Table[row][col].Piece.table, chessboards[whiteKingCoordinates.Item1].Table[row][col].Piece.row, chessboards[whiteKingCoordinates.Item1].Table[row][col].Piece.col));
                                 flag = true;
                             }
                         }
@@ -371,7 +379,130 @@ namespace AliceChess
             }
 
             this.check = flag;
-            return flag;
+            return piecesThatCheckTheWK;
+        }
+
+        public Boolean checkWhiteMate()
+        {
+            Boolean checkMate = true;
+
+            var piecesThatCheckTheWK = checkWhiteKing();
+            var whiteKingCoords = whiteKingCoordinates;
+            List<Tuple<int, int, int>> allPossibleMoves = new List<Tuple<int, int, int>>();
+            List<List<Tuple<int, int, int>>> allPossiblePaths = new List<List<Tuple<int, int, int>>>();
+            foreach (var pieceCoord in piecesThatCheckTheWK)
+            {
+                Game.chessboards[pieceCoord.Item1].Table[pieceCoord.Item2][pieceCoord.Item3].Piece.computePossibleMoves(Game.chessboards[pieceCoord.Item1]);
+                allPossibleMoves.AddRange(Game.chessboards[pieceCoord.Item1].Table[pieceCoord.Item2][pieceCoord.Item3].Piece.possibleMoves);
+                Game.chessboards[pieceCoord.Item1].Table[pieceCoord.Item2][pieceCoord.Item3].Piece.possibleMoves.Clear();
+            }
+
+
+            // calculate every path from piece to WK
+
+            //compare the coordinates in order to see the optimal path
+            foreach (var pieceCoord in piecesThatCheckTheWK)
+            {
+                List<Tuple<int, int, int>> possiblePath = new List<Tuple<int, int, int>>();
+                var checkDirection = Tuple.Create(pieceCoord.Item1 - whiteKingCoords.Item1, pieceCoord.Item2 - whiteKingCoords.Item2, pieceCoord.Item3 - whiteKingCoords.Item3);
+
+                if (checkDirection.Item2 == 0) // if the piece and the king are on the same row
+                {
+                    if (checkDirection.Item3 > 0) // check the direction you have to take from one to the other
+                    {
+                        for(int i = whiteKingCoords.Item3; i < pieceCoord.Item3; i++) // increase the column until you reach the king
+                        { 
+                            possiblePath.Add(Tuple.Create(0, pieceCoord.Item2, i)); // add each step to the possiblePath
+                        }
+                    }
+                    if (checkDirection.Item3 < 0)
+                    {
+                        for (int i = whiteKingCoords.Item3; i > pieceCoord.Item3; i--) // decrease the column until you reach the king
+                        {
+                            possiblePath.Add(Tuple.Create(0, pieceCoord.Item2, i)); // add each step to the possiblePath
+                        }
+                    }
+                }
+                else if (checkDirection.Item3 == 0)
+                {
+
+
+                    if (checkDirection.Item2 > 0) // check the direction you have to take from one to the other
+                    {
+                        for (int i = whiteKingCoords.Item2; i < pieceCoord.Item2; i++) // increase the row until you reach the king
+                        {
+                            possiblePath.Add(Tuple.Create(0, i, pieceCoord.Item3)); // add each step to the possiblePath
+                        }
+                    }
+                    if (checkDirection.Item2 < 0)
+                    {
+                        for (int i = whiteKingCoords.Item2; i > pieceCoord.Item2; i--) // decrease the row until you reach the king
+                        {
+                            possiblePath.Add(Tuple.Create(0, i, pieceCoord.Item3)); // add each step to the possiblePath
+                        }
+                    }
+
+                }
+                else if(checkDirection.Item2<0 && checkDirection.Item3 > 0)
+                {
+                    var pieceRow = pieceCoord.Item2;
+                    var kingRow = whiteKingCoords.Item2;
+                    var pieceCol = pieceCoord.Item3;
+                    while (pieceRow != kingRow)
+                    {
+                        pieceCol--;
+                        pieceRow++;
+                        possiblePath.Add(Tuple.Create(0, pieceRow, pieceCol));
+                    }
+                }
+                else if(checkDirection.Item2>0 && checkDirection.Item3 < 0)
+                {
+
+                    var pieceRow = pieceCoord.Item2;
+                    var kingRow = whiteKingCoords.Item2;
+                    var pieceCol = pieceCoord.Item3;
+                    while (pieceRow != kingRow)
+                    {
+                        pieceCol++;
+                        pieceRow--;
+                        possiblePath.Add(Tuple.Create(0, pieceRow, pieceCol));
+                    }
+
+                }
+                else if (checkDirection.Item2 > 0 && checkDirection.Item3 > 0)
+                {
+
+                    var pieceRow = pieceCoord.Item2;
+                    var kingRow = whiteKingCoords.Item2;
+                    var pieceCol = pieceCoord.Item3;
+                    while (pieceRow != kingRow)
+                    {
+                        pieceCol--;
+                        pieceRow--;
+                        possiblePath.Add(Tuple.Create(0, pieceRow, pieceCol));
+                    }
+
+                }
+                else if (checkDirection.Item2 < 0 && checkDirection.Item3 < 0)
+                {
+
+                    var pieceRow = pieceCoord.Item2;
+                    var kingRow = whiteKingCoords.Item2;
+                    var pieceCol = pieceCoord.Item3;
+                    while (pieceRow != kingRow)
+                    {
+                        pieceCol++;
+                        pieceRow++;
+                        possiblePath.Add(Tuple.Create(0, pieceRow, pieceCol));
+                    }
+
+                }
+
+                allPossiblePaths.Add(possiblePath);
+            }
+
+
+            return checkMate;
         }
 
     }

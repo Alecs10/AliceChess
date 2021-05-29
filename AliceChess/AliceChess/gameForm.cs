@@ -138,6 +138,7 @@ namespace AliceChess
                     {
                         MessageBox.Show("Sah");
                     }
+                    game.checkWhiteMate();
                 }
 
 
