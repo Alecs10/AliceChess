@@ -18,7 +18,7 @@ namespace AliceChess
 
         public override void computePossibleMoves(Board board)
         {
-
+            var chessTable = board == Game.chessboards[0] ? 0 : 1;
             this.possibleMoves.Clear();
             // bottom direction
 
@@ -28,7 +28,7 @@ namespace AliceChess
             {
                 if (!board.Table[temp][col].containsPiece())
                 {
-                    Tuple<int, int> position = Tuple.Create(temp, col);
+                    Tuple<int, int,int> position = Tuple.Create(chessTable,temp, col);
                     this.possibleMoves.Add(position);
                     temp++;
                 }
@@ -36,7 +36,7 @@ namespace AliceChess
                 {
                     if (board.Table[temp][col].Piece.color!=this.color)
                     {
-                        Tuple<int, int> position = Tuple.Create(temp, col);
+                        Tuple<int, int, int> position = Tuple.Create(chessTable, temp, col);
                         this.possibleMoves.Add(position);
                     }
                     break;
@@ -52,7 +52,7 @@ namespace AliceChess
             {
                 if (!board.Table[temp][col].containsPiece())
                 {
-                    Tuple<int, int> position = Tuple.Create(temp, col);
+                    Tuple<int, int, int> position = Tuple.Create(chessTable, temp, col);
                     this.possibleMoves.Add(position);
                     temp--;
                 }
@@ -60,7 +60,7 @@ namespace AliceChess
                 {
                     if (board.Table[temp][col].Piece.color != this.color)
                     {
-                        Tuple<int, int> position = Tuple.Create(temp, col);
+                        Tuple<int, int, int> position = Tuple.Create(chessTable, temp, col);
                         this.possibleMoves.Add(position);
                     }
                     break;
@@ -76,7 +76,7 @@ namespace AliceChess
             {
                 if (!board.Table[row][temp].containsPiece())
                 {
-                    Tuple<int, int> position = Tuple.Create(row, temp);
+                    Tuple<int, int, int> position = Tuple.Create(chessTable, row, temp);
                     this.possibleMoves.Add(position);
                     temp--;
                 }
@@ -84,7 +84,7 @@ namespace AliceChess
                 {
                     if (board.Table[row][temp].Piece.color != this.color)
                     {
-                        Tuple<int, int> position = Tuple.Create(row, temp);
+                        Tuple<int, int, int> position = Tuple.Create(chessTable, row, temp);
                         this.possibleMoves.Add(position);
                     }
                     break;
@@ -100,7 +100,7 @@ namespace AliceChess
             {
                 if (!board.Table[row][temp].containsPiece())
                 {
-                    Tuple<int, int> position = Tuple.Create(row, temp);
+                    Tuple<int, int, int> position = Tuple.Create(chessTable, row, temp);
                     this.possibleMoves.Add(position);
                     temp++;
                 }
@@ -108,7 +108,7 @@ namespace AliceChess
                 {
                     if (board.Table[row][temp].Piece.color != this.color)
                     {
-                        Tuple<int, int> position = Tuple.Create(row, temp);
+                        Tuple<int, int, int> position = Tuple.Create(chessTable, row, temp);
                         this.possibleMoves.Add(position);
                     }
                     break;

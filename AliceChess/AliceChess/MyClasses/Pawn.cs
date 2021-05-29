@@ -23,15 +23,16 @@ namespace AliceChess
         public override void computePossibleMoves(Board board)
         {
             this.possibleMoves.Clear();
+            var chessTable = board == Game.chessboards[0] ? 0 : 1;
 
             if (this.color == PieceColor.Black) // for the black pawns
             {
                 if(!board.Table[row + 1][col].containsPiece()) // if the next square is free
                 {
-                    this.possibleMoves.Add(Tuple.Create(row + 1, col)); // add it to the possible moves list
+                    this.possibleMoves.Add(Tuple.Create(chessTable,row + 1, col)); // add it to the possible moves list
                     if (startingPosition == true && !board.Table[row + 2][col].containsPiece()) // if the pawn is in its starting pos and the square after the next is free, add it as well
                     {
-                        this.possibleMoves.Add(Tuple.Create(row + 2, col));
+                        this.possibleMoves.Add(Tuple.Create(chessTable, row + 2, col));
                     }
                 }
                 
@@ -41,14 +42,14 @@ namespace AliceChess
                 {
                     if (board.Table[row + 1][col - 1].Piece.color != this.color)
                     {
-                        this.possibleMoves.Add(Tuple.Create(row + 1, col - 1));
+                        this.possibleMoves.Add(Tuple.Create(chessTable, row + 1, col - 1));
                     }
                 }
                 if (col !=7 && board.Table[row + 1][col+1].containsPiece()) // check right side  as long as you are not on the rightmost column
                 {
                     if (board.Table[row + 1][col + 1].Piece.color != this.color)
                     {
-                        this.possibleMoves.Add(Tuple.Create(row + 1, col + 1));
+                        this.possibleMoves.Add(Tuple.Create(chessTable, row + 1, col + 1));
                     }
                 }
             }
@@ -56,10 +57,10 @@ namespace AliceChess
             {
                 if (!board.Table[row - 1][col].containsPiece()) 
                 {
-                    this.possibleMoves.Add(Tuple.Create(row - 1, col));
+                    this.possibleMoves.Add(Tuple.Create(chessTable, row - 1, col));
                     if (startingPosition == true && !board.Table[row - 2][col].containsPiece()) 
                     {
-                        this.possibleMoves.Add(Tuple.Create(row - 2, col));
+                        this.possibleMoves.Add(Tuple.Create(chessTable, row - 2, col));
                     }
                 }
 
@@ -67,14 +68,14 @@ namespace AliceChess
                 {
                     if (board.Table[row - 1][col - 1].Piece.color != this.color)
                     {
-                        this.possibleMoves.Add(Tuple.Create(row - 1, col - 1));
+                        this.possibleMoves.Add(Tuple.Create(chessTable, row - 1, col - 1));
                     }
                 }
                 if (col != 7 && board.Table[row - 1][col + 1].containsPiece())
                 {
                     if (board.Table[row - 1][col + 1].Piece.color != this.color)
                     {
-                        this.possibleMoves.Add(Tuple.Create(row - 1, col + 1));
+                        this.possibleMoves.Add(Tuple.Create(chessTable, row - 1, col + 1));
                     }
                 }
             }

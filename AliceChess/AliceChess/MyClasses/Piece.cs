@@ -10,16 +10,16 @@ namespace AliceChess
 {
     enum PieceType
     {
-        Empty=9,
+        Empty = 9,
 
         Pawn = 0,
         Knight = 1,
         Bishop = 2,
         Rook = 3,
-        King=4,
-        Queen =5
+        King = 4,
+        Queen = 5
 
-       
+
     };
 
     public enum PieceColor
@@ -29,8 +29,8 @@ namespace AliceChess
     }
 
 
-    
-    abstract class Piece 
+
+    abstract class Piece
     {
         public PieceType type;
         public PieceColor color;
@@ -38,19 +38,31 @@ namespace AliceChess
         public int col;
         public int table;
 
-        public List<Tuple<int, int>> possibleMoves;
+        public List<Tuple<int, int, int>> possibleMoves;
 
         public Piece()
         {
-            possibleMoves = new List<Tuple<int, int>>();
+            possibleMoves = new List<Tuple<int, int, int>>();
             table = 0;
         }
         public abstract void computePossibleMoves(Board board);
 
+        public void removeIllegalMoves()
+        {
+            int newTable = table == 0 ? 1 : 0;
+
+            for (int i = 0; i < possibleMoves.Count; i++)
+            {
+                if (Game.chessboards[newTable].Table[possibleMoves[i].Item2][possibleMoves[i].Item3].containsPiece())
+                {
+                    possibleMoves.RemoveAt(i);
+                    i--;
+                }
+            }
 
 
 
 
-
+        }
     }
 }

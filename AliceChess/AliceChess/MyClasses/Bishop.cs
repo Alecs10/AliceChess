@@ -19,8 +19,9 @@ namespace AliceChess
         public override void computePossibleMoves(Board board)
         {
             this.possibleMoves.Clear();
+            var chessTable = board == Game.chessboards[0] ? 0 : 1;
             // NW direction
-
+            
             var r = row-1;
             var c = col-1;
 
@@ -30,13 +31,13 @@ namespace AliceChess
                 {
                     if (board.Table[r][c].Piece.color != this.color)
                     {
-                        possibleMoves.Add(Tuple.Create(r, c));
+                        possibleMoves.Add(Tuple.Create(chessTable,r, c));
                     }
                     break;
                 }
                 else
                 {
-                    possibleMoves.Add(Tuple.Create(r, c));
+                    possibleMoves.Add(Tuple.Create(chessTable, r, c));
                     r--;
                     c--;
                 }
@@ -53,13 +54,13 @@ namespace AliceChess
                 {
                     if (board.Table[r][c].Piece.color != this.color)
                     {
-                        possibleMoves.Add(Tuple.Create(r, c));
+                        possibleMoves.Add(Tuple.Create(chessTable, r, c));
                     }
                     break;
                 }
                 else
                 {
-                    possibleMoves.Add(Tuple.Create(r, c));
+                    possibleMoves.Add(Tuple.Create(chessTable, r, c));
                     r++;
                     c++;
                 }
@@ -76,13 +77,13 @@ namespace AliceChess
                 {
                     if (board.Table[r][c].Piece.color != this.color)
                     {
-                        possibleMoves.Add(Tuple.Create(r, c));
+                        possibleMoves.Add(Tuple.Create(chessTable, r, c));
                     }
                     break;
                 }
                 else
                 {
-                    possibleMoves.Add(Tuple.Create(r, c));
+                    possibleMoves.Add(Tuple.Create(chessTable, r, c));
                     r--;
                     c++;
                 }
@@ -100,13 +101,13 @@ namespace AliceChess
                 {
                     if (board.Table[r][c].Piece.color != this.color)
                     {
-                        possibleMoves.Add(Tuple.Create(r, c));
+                        possibleMoves.Add(Tuple.Create(chessTable, r, c));
                     }
                     break;
                 }
                 else
                 {
-                    possibleMoves.Add(Tuple.Create(r, c));
+                    possibleMoves.Add(Tuple.Create(chessTable, r, c));
                     r++;
                     c--;
                 }

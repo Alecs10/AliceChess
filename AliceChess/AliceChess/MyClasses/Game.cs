@@ -11,15 +11,17 @@ namespace AliceChess
     {
         static public Board[] chessboards;
         public PieceColor currentTurn;
-        public List<Tuple<int, int>> possibleMoves;
+        public List<Tuple<int,int, int>> possibleMoves;
         public bool click;
-        public Cell tempCell;
+        public static Cell tempCell;
+        public static int boardTemp;
         public static List<Piece> blackPiecesKilled;
         public static List<Piece> whitePiecesKilled;
         public static Piece selectedPiece;
         public static int row, col;
         public static Tuple<int, int> blackKingCoordinates, whiteKingCoordinates;
         public Boolean check;
+
 
 
 
@@ -41,7 +43,7 @@ namespace AliceChess
 
 
             InitializeKilledPieces();
-            InitializeBoardBasedOnFEN("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1", chessboards[0].Table);
+            InitializeBoardBasedOnFEN("rnbqk2r/pppp1bpp/8/3p4/2p4n/1B6/1PPPPPPP/RNBQK1NR w KQkq - 0 1", chessboards[0].Table);
             InitializeBoardBasedOnFEN("8/8/8/8/8/8/8/8", chessboards[1].Table);
 
         }
@@ -94,7 +96,7 @@ namespace AliceChess
                     case ("p"):
 
                         table[row][col].Piece = new Pawn(color);
-                        
+
                         break;
 
                     case ("n"):
@@ -179,23 +181,27 @@ namespace AliceChess
 
             foreach (var newMove in this.possibleMoves)
             {
-                board.Table[newMove.Item1][newMove.Item2].DrawCircle();
+                board.Table[newMove.Item2][newMove.Item3].DrawCircle();
             }
         }
 
-        public Piece movePiece(int oldRow, int oldCol, int newRow, int newCol, int table)
+        public Piece movePiece(int oldRow, int oldCol, int newRow, int newCol, int currentTable)
         {
 
+            int nextTable = currentTable == 0 ? 1 : 0;
+            //daca e pion, dupa prima mutare nu mai poate merge 2 patratele in fata
 
-            if (chessboards[table].Table[oldRow][oldCol].Piece is Pawn)
+            if (chessboards[currentTable].Table[oldRow][oldCol].Piece is Pawn)
             {
-                ((Pawn)chessboards[table].Table[oldRow][oldCol].Piece).startingPosition = false;
+                ((Pawn)chessboards[currentTable].Table[oldRow][oldCol].Piece).startingPosition = false;
             }
 
-            if (chessboards[table].Table[oldRow][oldCol].Piece is King)
+            //daca e rege, memoreaza i coordonatele in variabilele din Game pentru a putea verifica daca se afla in sah
+
+            if (chessboards[currentTable].Table[oldRow][oldCol].Piece is King)
             {
 
-                var color = chessboards[table].Table[oldRow][oldCol].Piece.color;
+                var color = chessboards[currentTable].Table[oldRow][oldCol].Piece.color;
 
                 if (color == PieceColor.Black)
                 {
@@ -208,32 +214,30 @@ namespace AliceChess
 
             }
 
-            //if (chessboards[table].Table[newRow][newCol].containsPiece() && !(chessboards[table].Table[newRow][newCol].Piece is Pawn))
-            //{
-            //    if (chessboards[table].Table[newRow][newCol].Piece.color == PieceColor.Black)
-            //    {
-            //        blackPiecesKilled.Add(chessboards[table].Table[newRow][newCol].Piece);
+            // mutam piesa la noua locatie
 
-            //    }
-            //    else
-            //    {
-            //        whitePiecesKilled.Add(chessboards[table].Table[newRow][newCol].Piece);
-            //    }
+            chessboards[nextTable].Table[newRow][newCol].Piece = chessboards[currentTable].Table[oldRow][oldCol].Piece;
 
-            //}
+            // stergem piesa de la vechea locatie
+            chessboards[currentTable].Table[oldRow][oldCol].Piece = null;
 
+            // stergem piesa de la noua locatie(daca exista)
 
-            chessboards[table].Table[newRow][newCol].Piece = chessboards[table].Table[oldRow][oldCol].Piece;
-
-            chessboards[table].Table[oldRow][oldCol].Piece = null;
-
-
-            if (chessboards[table].Table[newRow][newCol].Piece is Pawn)
+            if (chessboards[currentTable].Table[newRow][newCol].containsPiece())
             {
-                if (chessboards[table].Table[newRow][newCol].Piece.color == PieceColor.Black)
+                chessboards[currentTable].Table[newRow][newCol].Piece = null;
+                chessboards[currentTable].Table[newRow][newCol].LoadImage();
+            }
+
+
+            // daca piesa e pion si a ajuns pana pe ultimul rand al tablei, arata-i optiunile si promoveaza-l
+            if (chessboards[nextTable].Table[newRow][newCol].Piece is Pawn)
+            {
+                if (chessboards[nextTable].Table[newRow][newCol].Piece.color == PieceColor.Black)
                 {
                     if (newRow == 7)
                     {
+                        Game.boardTemp = chessboards[nextTable].Table[newRow][newCol].Piece.table;
                         killedPieces kill = new killedPieces();
                         Game.col = newCol;
                         Game.row = newRow;
@@ -247,6 +251,7 @@ namespace AliceChess
                 {
                     if (newRow == 0)
                     {
+                        Game.boardTemp = chessboards[nextTable].Table[newRow][newCol].Piece.table;
                         killedPieces kill = new killedPieces();
                         Game.col = newCol;
                         Game.row = newRow;
@@ -257,11 +262,14 @@ namespace AliceChess
 
             }
 
+            // incarca imaginea pt noua piesa / sterge imaginea din vechea piesa 
+            chessboards[currentTable].Table[oldRow][oldCol].LoadImage();
+            chessboards[nextTable].Table[newRow][newCol].LoadImage();
 
-            chessboards[table].Table[oldRow][oldCol].LoadImage();
-            chessboards[table].Table[newRow][newCol].LoadImage();
-            chessboards[table].Table[newRow][newCol].Piece.col = newCol;
-            chessboards[table].Table[newRow][newCol].Piece.row = newRow;
+            // actualizeaza coordonatele in piesa noua
+            chessboards[nextTable].Table[newRow][newCol].Piece.col = newCol;
+            chessboards[nextTable].Table[newRow][newCol].Piece.row = newRow;
+            chessboards[nextTable].Table[newRow][newCol].Piece.table = nextTable;
 
 
             return null;
@@ -269,64 +277,30 @@ namespace AliceChess
 
 
 
-        public List<Tuple<int, int>> getPiecesCoordinates(PieceColor color)
+        public List<Tuple<int, int, int>> getPiecesCoordinates(PieceColor color)
         {
-            List<Tuple<int, int>> returnedIndexes = new List<Tuple<int, int>>();
+            List<Tuple<int, int, int>> returnedIndexes = new List<Tuple<int, int, int>>();
 
             for (int row = 0; row < 8; row++)
             {
                 for (int col = 0; col < 8; col++)
                 {
-                    if (chessboards[0].Table[row][col].containsPiece())
+                    for (int table = 0; table < 2; table++)
                     {
-                        if (chessboards[0].Table[row][col].Piece.color == color)
+                        if (chessboards[table].Table[row][col].containsPiece())
                         {
-                            Tuple<int, int> coordinates = Tuple.Create(row, col);
-                            returnedIndexes.Add(coordinates);
+                            if (chessboards[table].Table[row][col].Piece.color == color)
+                            {
+                                Tuple<int, int, int> coordinates = Tuple.Create(table, row, col);
+                                returnedIndexes.Add(coordinates);
+                            }
                         }
-
-                        //if (chessboards[1].Table[row][col].Piece.color == (white ? PieceColor.White : PieceColor.Black))
-                        //{
-                        //    Tuple<int, int, int> coordinates = Tuple.Create(row, col, 1);
-                        //    returnedIndexes.Add(coordinates);
-                        //}
                     }
                 }
             }
 
             return returnedIndexes;
         }
-
-        //public List<Tuple<PieceColor,int, int>> getKingsCoordinates()
-        //{
-        //    List<Tuple<PieceColor, int, int>> coordinates = new List<Tuple<PieceColor, int, int>>();
-
-
-        //    for (int row = 0; row < 8; row++)
-        //    {
-        //        for (int col = 0; col < 8; col++)
-        //        {
-        //            if (chessboards[0].Table[row][col].containsPiece())
-        //            {
-
-        //                if (chessboards[0].Table[row][col].Piece.color == PieceColor.White && chessboards[0].Table[row][col].Piece.type == PieceType.King)
-        //                {
-        //                    var temp = Tuple.Create(PieceColor.White, row, col);
-        //                    coordinates.Add(temp);
-        //                }
-
-        //                if (chessboards[0].Table[row][col].Piece.color == PieceColor.Black && chessboards[0].Table[row][col].Piece.type == PieceType.King)
-        //                {
-        //                    var temp = Tuple.Create(PieceColor.Black, row, col);
-        //                    coordinates.Add(temp);
-        //                }
-        //            }
-        //        }
-        //    }
-
-
-        // return coordinates;
-        //}
 
 
         public Boolean checkKings()
@@ -339,7 +313,7 @@ namespace AliceChess
                     if (chessboards[0].Table[row][col].containsPiece())
                     {
                         chessboards[0].Table[row][col].Piece.computePossibleMoves(Game.chessboards[0]);
-                        foreach(var move in chessboards[0].Table[row][col].Piece.possibleMoves)
+                        foreach (var move in chessboards[0].Table[row][col].Piece.possibleMoves)
                         {
                             if (move.Equals(whiteKingCoordinates) || move.Equals(blackKingCoordinates))
                             {
@@ -349,12 +323,15 @@ namespace AliceChess
                         chessboards[0].Table[row][col].Piece.possibleMoves.Clear();
                     }
 
-                    
+
                 }
             }
 
+            this.check = flag;
             return flag;
 
         }
+
+
     }
 }
