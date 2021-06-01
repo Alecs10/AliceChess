@@ -136,9 +136,16 @@ namespace AliceChess
                     Game.chessboards[0].Table[oldRow][oldCol].Click -= chessBoard1PieceClick;
                     if (game.checkKings())
                     {
-                        MessageBox.Show("Sah");
+                        if (game.checkWhiteMate()){
+                            MessageBox.Show("Mat");
+                        }
+                        else
+                        {
+                            MessageBox.Show("Sah");
+                        }
+                        
                     }
-                    game.checkWhiteMate();
+                    
                 }
 
 
