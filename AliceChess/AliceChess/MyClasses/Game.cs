@@ -22,6 +22,8 @@ namespace AliceChess
         public static Tuple<int, int, int> blackKingCoordinates, whiteKingCoordinates;
         public Boolean check;
         public static PieceColor selectedPieceColor;
+        public static Boolean flagKingMove = false, flagBlockPiece = false, flagTakePiece = false;
+
 
 
 
@@ -310,37 +312,141 @@ namespace AliceChess
             return returnedIndexes;
         }
 
+        public void artificialIntelligence()
+        {
+            var blackPiecesCoords = getPiecesCoordinates(PieceColor.Black);
+
+            Dictionary<Piece,List<Tuple<int, int, int>>> allBlackMoves = new Dictionary<Piece, List<Tuple<int, int, int>>>();
+            Dictionary<Piece, Tuple<int, int, int>> allMovesToPiece = new Dictionary<Piece, Tuple<int, int, int>>();
+            foreach (var piece in blackPiecesCoords)
+            {
+                Game.chessboards[piece.Item1].Table[piece.Item2][piece.Item3].Piece.computePossibleMoves(Game.chessboards[piece.Item1]);
+
+                if (Game.chessboards[piece.Item1].Table[piece.Item2][piece.Item3].Piece.possibleMoves.Count != 0)
+                {
+                    List<Tuple<int, int, int>> temp = new List<Tuple<int, int, int>>();
+                    temp.AddRange(Game.chessboards[piece.Item1].Table[piece.Item2][piece.Item3].Piece.possibleMoves);
+                    allBlackMoves[Game.chessboards[piece.Item1].Table[piece.Item2][piece.Item3].Piece] = temp;
+                    foreach (var move in Game.chessboards[piece.Item1].Table[piece.Item2][piece.Item3].Piece.possibleMoves)
+                    {
+                        if (Game.chessboards[move.Item1].Table[move.Item2][move.Item3].containsPiece())
+                        {
+                            allMovesToPiece[Game.chessboards[piece.Item1].Table[piece.Item2][piece.Item3].Piece]=move;
+                        }
+                    }
+                }
+
+                
+
+                Game.chessboards[piece.Item1].Table[piece.Item2][piece.Item3].Piece.possibleMoves.Clear();
+            }
+
+            Random rand = new Random();
+
+            Piece key;
+            int index;
+
+            Tuple<int, int, int> newCoords;
+            int oldRow, oldCol, oldTable, indexNew, newRow, newCol;
+
+            if (allMovesToPiece.Count != 0)
+            {
+                index = rand.Next(allMovesToPiece.Count);
+                key = allMovesToPiece.Keys.ElementAt(index);
+                
+
+                oldRow = key.row;
+                oldCol = key.col;
+                oldTable = key.table;
+
+                newCoords = allMovesToPiece[key];
+                newRow = newCoords.Item2;
+                newCol = newCoords.Item3;
+            }
+            else
+            {
+                index = rand.Next(allBlackMoves.Count);
+                key = allBlackMoves.Keys.ElementAt(index);
+                indexNew = rand.Next(allBlackMoves[key].Count);
+
+                 oldRow = key.row;
+                 oldCol = key.col;
+                 oldTable = key.table;
+
+
+
+                 newCoords = allBlackMoves[key][indexNew];
+                 newRow = newCoords.Item2;
+                 newCol = newCoords.Item3;
+            }
+
+            
+            
+
+            movePiece(oldRow, oldCol, newRow, newCol, oldTable);
+
+
+
+        }
+
+        public Boolean pieceInCheck(Tuple<int, int, int> coordinates)
+        {
+            Boolean result = false;
+
+            for (int row = 0; row < 8; row++)
+            {
+                for (int col = 0; col < 8; col++)
+                {
+                    if (chessboards[coordinates.Item1].Table[row][col].containsPiece())
+                    {
+                        chessboards[coordinates.Item1].Table[row][col].Piece.computePossibleMoves(Game.chessboards[coordinates.Item1]);
+                        foreach (var move in chessboards[coordinates.Item1].Table[row][col].Piece.possibleMoves)
+                        {
+                            if (move.Equals(coordinates))
+                            {                                
+                                result = true;
+                            }
+                        }
+                        chessboards[coordinates.Item1].Table[row][col].Piece.possibleMoves.Clear();
+                    }
+
+
+                }
+            }
+            return result;
+        }
 
         public Boolean checkKings()
         {
             Boolean emptyList = true;
-            if ((checkBlackKing().Count != 0) || (checkWhiteKing().Count != 0))
+            if ((checkKing(PieceColor.Black).Count != 0) || (checkKing(PieceColor.White).Count != 0))
             {
                 emptyList = false;
             }
             return !emptyList;
         }
 
-        public List<Tuple<int, int, int>> checkBlackKing()
+        public List<Tuple<int, int, int>> checkKing(PieceColor color)
         {
-            List<Tuple<int, int, int>> piecesThatCheckTheBK = new List<Tuple<int, int, int>>();
+            List<Tuple<int, int, int>> piecesThatCheckTheKing = new List<Tuple<int, int, int>>();
+            var kingCoords = color == PieceColor.White ? whiteKingCoordinates : blackKingCoordinates;
             var flag = false;
             for (int row = 0; row < 8; row++)
             {
                 for (int col = 0; col < 8; col++)
                 {
-                    if (chessboards[blackKingCoordinates.Item1].Table[row][col].containsPiece())
+                    if (chessboards[kingCoords.Item1].Table[row][col].containsPiece())
                     {
-                        chessboards[blackKingCoordinates.Item1].Table[row][col].Piece.computePossibleMoves(Game.chessboards[blackKingCoordinates.Item1]);
-                        foreach (var move in chessboards[blackKingCoordinates.Item1].Table[row][col].Piece.possibleMoves)
+                        chessboards[kingCoords.Item1].Table[row][col].Piece.computePossibleMoves(Game.chessboards[kingCoords.Item1]);
+                        foreach (var move in chessboards[kingCoords.Item1].Table[row][col].Piece.possibleMoves)
                         {
-                            if (move.Equals(blackKingCoordinates))
+                            if (move.Equals(kingCoords))
                             {
-                                piecesThatCheckTheBK.Add(Tuple.Create(chessboards[blackKingCoordinates.Item1].Table[row][col].Piece.table, chessboards[blackKingCoordinates.Item1].Table[row][col].Piece.row, chessboards[blackKingCoordinates.Item1].Table[row][col].Piece.col));
+                                piecesThatCheckTheKing.Add(Tuple.Create(chessboards[kingCoords.Item1].Table[row][col].Piece.table, chessboards[kingCoords.Item1].Table[row][col].Piece.row, chessboards[kingCoords.Item1].Table[row][col].Piece.col));
                                 flag = true;
                             }
                         }
-                        chessboards[blackKingCoordinates.Item1].Table[row][col].Piece.possibleMoves.Clear();
+                        chessboards[kingCoords.Item1].Table[row][col].Piece.possibleMoves.Clear();
                     }
 
 
@@ -348,78 +454,52 @@ namespace AliceChess
             }
 
             this.check = flag;
-            return piecesThatCheckTheBK;
+            return piecesThatCheckTheKing;
         }
 
-        public List<Tuple<int, int, int>> checkWhiteKing()
+        public Boolean checkKingMate(PieceColor color)
         {
-            List<Tuple<int, int, int>> piecesThatCheckTheWK = new List<Tuple<int, int, int>>();
-            var flag = false;
-            for (int row = 0; row < 8; row++)
-            {
-                for (int col = 0; col < 8; col++)
-                {
-                    if (chessboards[whiteKingCoordinates.Item1].Table[row][col].containsPiece())
-                    {
-                        chessboards[whiteKingCoordinates.Item1].Table[row][col].Piece.computePossibleMoves(Game.chessboards[whiteKingCoordinates.Item1]);
-                        foreach (var move in chessboards[whiteKingCoordinates.Item1].Table[row][col].Piece.possibleMoves)
-                        {
-                            if (move.Equals(whiteKingCoordinates))
-                            {
+            Boolean checkMate = false; // flag ul este implicit fals
 
-                                piecesThatCheckTheWK.Add(Tuple.Create(chessboards[whiteKingCoordinates.Item1].Table[row][col].Piece.table, chessboards[whiteKingCoordinates.Item1].Table[row][col].Piece.row, chessboards[whiteKingCoordinates.Item1].Table[row][col].Piece.col));
-                                flag = true;
-                            }
-                        }
-                        chessboards[whiteKingCoordinates.Item1].Table[row][col].Piece.possibleMoves.Clear();
-                    }
-
-
-                }
-            }
-
-            this.check = flag;
-            return piecesThatCheckTheWK;
-        }
-
-        public Boolean checkWhiteMate()
-        {
-            Boolean checkMate = true;
-
-            var piecesThatCheckTheWK = checkWhiteKing();
-            var whiteKingCoords = whiteKingCoordinates;
+            var piecesThatCheckTheKing = color.Equals(PieceColor.White) ? checkKing(PieceColor.White) : checkKing(PieceColor.Black); //list with all the pieces that put the king in check
+            var KingCoords = color.Equals(PieceColor.White)? whiteKingCoordinates:blackKingCoordinates; // king's current coordinates
             List<Tuple<int, int, int>> allPossibleMoves = new List<Tuple<int, int, int>>();
             List<Tuple<int, int, int>> allPossiblePaths = new List<Tuple<int, int, int>>();
-            foreach (var pieceCoord in piecesThatCheckTheWK)
+
+
+            
+
+            foreach (var pieceCoord in piecesThatCheckTheKing)
             {
                 Game.chessboards[pieceCoord.Item1].Table[pieceCoord.Item2][pieceCoord.Item3].Piece.computePossibleMoves(Game.chessboards[pieceCoord.Item1]);
                 allPossibleMoves.AddRange(Game.chessboards[pieceCoord.Item1].Table[pieceCoord.Item2][pieceCoord.Item3].Piece.possibleMoves);
                 Game.chessboards[pieceCoord.Item1].Table[pieceCoord.Item2][pieceCoord.Item3].Piece.possibleMoves.Clear();
-            }
+            } // get all the possible moves of the pieces that check the king 
 
+            // STEP 1/3 CHECK IF ANY WHITE PIECE CAN BLOCK THE PATH THAT PUTS THE KING IN CHECK
 
             // calculate every path from piece to WK
 
             //compare the coordinates in order to see the optimal paths
-            foreach (var pieceCoord in piecesThatCheckTheWK)
+            foreach (var pieceCoord in piecesThatCheckTheKing)
             {
                 List<Tuple<int, int, int>> possiblePath = new List<Tuple<int, int, int>>();
-                var checkDirection = Tuple.Create(pieceCoord.Item1 - whiteKingCoords.Item1, pieceCoord.Item2 - whiteKingCoords.Item2, pieceCoord.Item3 - whiteKingCoords.Item3);
+                var checkDirection = Tuple.Create(pieceCoord.Item1 - KingCoords.Item1, pieceCoord.Item2 - KingCoords.Item2, pieceCoord.Item3 - KingCoords.Item3);
 
                 if (checkDirection.Item2 == 0) // if the piece and the king are on the same row
                 {
                     if (checkDirection.Item3 > 0) // check the direction you have to take from one to the other
                     {
-                        for(int i = whiteKingCoords.Item3; i < pieceCoord.Item3; i++) // increase the column until you reach the king
+                        for(int i = KingCoords.Item3; i < pieceCoord.Item3; i++) // increase the column until you reach the king
                         { 
-                            possiblePath.Add(Tuple.Create(whiteKingCoords.Item1, pieceCoord.Item2, i)); // add each step to the possiblePath
+                            possiblePath.Add(Tuple.Create(KingCoords.Item1, pieceCoord.Item2, i)); // add each step to the possiblePath
                         }
                     }
                     if (checkDirection.Item3 < 0)
                     {
-                        for (int i = whiteKingCoords.Item3; i > pieceCoord.Item3; i--) // decrease the column until you reach the king
+                        for (int i = KingCoords.Item3; i > pieceCoord.Item3; i--) // decrease the column until you reach the king
                         {
-                            possiblePath.Add(Tuple.Create(whiteKingCoords.Item1, pieceCoord.Item2, i)); // add each step to the possiblePath
+                            possiblePath.Add(Tuple.Create(KingCoords.Item1, pieceCoord.Item2, i)); // add each step to the possiblePath
                         }
                     }
                 }
@@ -429,16 +509,16 @@ namespace AliceChess
 
                     if (checkDirection.Item2 > 0) // check the direction you have to take from one to the other
                     {
-                        for (int i = whiteKingCoords.Item2; i < pieceCoord.Item2; i++) // increase the row until you reach the king
+                        for (int i = KingCoords.Item2; i < pieceCoord.Item2; i++) // increase the row until you reach the king
                         {
-                            possiblePath.Add(Tuple.Create(whiteKingCoords.Item1, i, pieceCoord.Item3)); // add each step to the possiblePath
+                            possiblePath.Add(Tuple.Create(KingCoords.Item1, i, pieceCoord.Item3)); // add each step to the possiblePath
                         }
                     }
                     if (checkDirection.Item2 < 0)
                     {
-                        for (int i = whiteKingCoords.Item2; i > pieceCoord.Item2; i--) // decrease the row until you reach the king
+                        for (int i = KingCoords.Item2; i > pieceCoord.Item2; i--) // decrease the row until you reach the king
                         {
-                            possiblePath.Add(Tuple.Create(whiteKingCoords.Item1, i, pieceCoord.Item3)); // add each step to the possiblePath
+                            possiblePath.Add(Tuple.Create(KingCoords.Item1, i, pieceCoord.Item3)); // add each step to the possiblePath
                         }
                     }
 
@@ -446,26 +526,26 @@ namespace AliceChess
                 else if(checkDirection.Item2<0 && checkDirection.Item3 > 0)
                 {
                     var pieceRow = pieceCoord.Item2;
-                    var kingRow = whiteKingCoords.Item2;
+                    var kingRow = KingCoords.Item2;
                     var pieceCol = pieceCoord.Item3;
                     while (pieceRow != kingRow)
                     {
                         pieceCol--;
                         pieceRow++;
-                        possiblePath.Add(Tuple.Create(whiteKingCoords.Item1, pieceRow, pieceCol));
+                        possiblePath.Add(Tuple.Create(KingCoords.Item1, pieceRow, pieceCol));
                     }
                 }
                 else if(checkDirection.Item2>0 && checkDirection.Item3 < 0)
                 {
 
                     var pieceRow = pieceCoord.Item2;
-                    var kingRow = whiteKingCoords.Item2;
+                    var kingRow = KingCoords.Item2;
                     var pieceCol = pieceCoord.Item3;
                     while (pieceRow != kingRow)
                     {
                         pieceCol++;
                         pieceRow--;
-                        possiblePath.Add(Tuple.Create(whiteKingCoords.Item1, pieceRow, pieceCol));
+                        possiblePath.Add(Tuple.Create(KingCoords.Item1, pieceRow, pieceCol));
                     }
 
                 }
@@ -473,13 +553,13 @@ namespace AliceChess
                 {
 
                     var pieceRow = pieceCoord.Item2;
-                    var kingRow = whiteKingCoords.Item2;
+                    var kingRow = KingCoords.Item2;
                     var pieceCol = pieceCoord.Item3;
                     while (pieceRow != kingRow)
                     {
                         pieceCol--;
                         pieceRow--;
-                        possiblePath.Add(Tuple.Create(whiteKingCoords.Item1, pieceRow, pieceCol));
+                        possiblePath.Add(Tuple.Create(KingCoords.Item1, pieceRow, pieceCol));
                     }
 
                 }
@@ -487,13 +567,13 @@ namespace AliceChess
                 {
 
                     var pieceRow = pieceCoord.Item2;
-                    var kingRow = whiteKingCoords.Item2;
+                    var kingRow = KingCoords.Item2;
                     var pieceCol = pieceCoord.Item3;
                     while (pieceRow != kingRow)
                     {
                         pieceCol++;
                         pieceRow++;
-                        possiblePath.Add(Tuple.Create(whiteKingCoords.Item1, pieceRow, pieceCol));
+                        possiblePath.Add(Tuple.Create(KingCoords.Item1, pieceRow, pieceCol));
                     }
 
                 }
@@ -503,7 +583,7 @@ namespace AliceChess
 
             for(int i = 0; i < allPossiblePaths.Count; i++)
             {
-                if (allPossiblePaths[i].Equals(whiteKingCoords))
+                if (allPossiblePaths[i].Equals(KingCoords))
                 {
                     allPossiblePaths.RemoveAt(i);
                     i--;
@@ -514,7 +594,7 @@ namespace AliceChess
             var whitePiecesLocation = getPiecesCoordinates(PieceColor.White); // get all the pieces that could block the mate
             foreach(var pieceCoord in whitePiecesLocation)
             {
-                if (!pieceCoord.Equals(whiteKingCoords))
+                if (!pieceCoord.Equals(KingCoords))
                 {
                     chessboards[pieceCoord.Item1].Table[pieceCoord.Item2][pieceCoord.Item3].Piece.computePossibleMoves(chessboards[pieceCoord.Item1]);
                     foreach (var move in chessboards[pieceCoord.Item1].Table[pieceCoord.Item2][pieceCoord.Item3].Piece.possibleMoves)
@@ -531,14 +611,49 @@ namespace AliceChess
                 {
                     if (move.Equals(pathCell))
                     {
-                        checkMate = false;
+                        flagBlockPiece = true;
                     }
 
                 }
             }
 
+
+            // STEP 2/3  CHECK IF THE KING CAN MOVE IN A NON CHECK POSITION
+
+            // get the possible king moves
+            Game.chessboards[whiteKingCoordinates.Item1].Table[whiteKingCoordinates.Item2][whiteKingCoordinates.Item3].Piece.computePossibleMoves(Game.chessboards[whiteKingCoordinates.Item1]);
+            var kingMoves = Game.chessboards[whiteKingCoordinates.Item1].Table[whiteKingCoordinates.Item2][whiteKingCoordinates.Item3].Piece.possibleMoves;
+
+            foreach (var kingMove in kingMoves)
+            {
+                var updatedMove = Tuple.Create(kingMove.Item1 == 0 ? 1 : 0, kingMove.Item2, kingMove.Item3);
+
+                flagKingMove=pieceInCheck(updatedMove);
+
+            }
+
+            // STEP 3/3  CHECK IF THE PIECE THAT CHECKS THE KING CAN BE TAKEN. IF THERE S MORE THAN ONE PIECES CHECKING THE KING AT THE SAME TIME, THIS CONDITION WILL ALWAYS BE TRUE
+
+            if (piecesThatCheckTheKing.Count == 1)
+            {
+                var piece = piecesThatCheckTheKing[0];
+                flagTakePiece = !pieceInCheck(piece);
+            }
+
+            else if (piecesThatCheckTheKing.Count > 1)
+            {
+                flagTakePiece = true;
+            }
+    
+
+            // if all 3 conditions are met, it means that its check mate 
+            if(flagKingMove && flagBlockPiece && flagTakePiece)
+            {
+                checkMate = true;
+            }
             return checkMate;
         }
+
 
     }
 }

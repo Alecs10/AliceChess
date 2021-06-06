@@ -132,20 +132,41 @@ namespace AliceChess
                     EnableClick(game.getPiecesCoordinates(game.currentTurn), false);
                     game.currentTurn = game.currentTurn == PieceColor.White ? PieceColor.Black : PieceColor.White;
                     UpdateLabel();
-                    EnableClick(game.getPiecesCoordinates(game.currentTurn), true);
+                    //EnableClick(game.getPiecesCoordinates(game.currentTurn), true);
                     Game.chessboards[0].Table[oldRow][oldCol].Click -= chessBoard1PieceClick;
                     if (game.checkKings())
                     {
-                        if (game.checkWhiteMate()){
+
+                        if (game.checkKingMate(PieceColor.White) && game.checkKingMate(PieceColor.Black)){
                             MessageBox.Show("Mat");
                         }
                         else
                         {
-                            MessageBox.Show("Sah");
+                            MessageBox.Show("Sah" + "King Move " + Game.flagKingMove.ToString() + " Block Piece: " +Game.flagBlockPiece.ToString() +" Take Piece " +  Game.flagTakePiece.ToString());
                         }
                         
                     }
-                    
+
+                    if(game.currentTurn.Equals(PieceColor.Black))
+                    {
+                        game.artificialIntelligence();
+                        game.currentTurn = game.currentTurn == PieceColor.White ? PieceColor.Black : PieceColor.White;
+                        EnableClick(game.getPiecesCoordinates(game.currentTurn), true);
+                        if (game.checkKings())
+                        {
+
+                            if (game.checkKingMate(PieceColor.White) && game.checkKingMate(PieceColor.Black))
+                            {
+                                MessageBox.Show("Mat");
+                            }
+                            else
+                            {
+                                MessageBox.Show("Sah" + "King Move " + Game.flagKingMove.ToString() + " Block Piece: " + Game.flagBlockPiece.ToString() + " Take Piece " + Game.flagTakePiece.ToString());
+                            }
+
+                        }
+                    }
+
                 }
 
 
