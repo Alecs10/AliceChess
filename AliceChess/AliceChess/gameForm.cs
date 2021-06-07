@@ -150,8 +150,10 @@ namespace AliceChess
                     if(game.currentTurn.Equals(PieceColor.Black))
                     {
                         game.artificialIntelligence();
+                        EnableClick(game.getPiecesCoordinates(game.currentTurn), false);
                         game.currentTurn = game.currentTurn == PieceColor.White ? PieceColor.Black : PieceColor.White;
                         EnableClick(game.getPiecesCoordinates(game.currentTurn), true);
+                      
                         if (game.checkKings())
                         {
 
@@ -173,7 +175,7 @@ namespace AliceChess
             }
             if(game.click)
             {
-                if (test.containsPiece())
+                if (test.containsPiece() && test.Piece.color == game.currentTurn)
                 {
                     Game.selectedPieceColor = test.Piece.color;
                     clearSelections();
