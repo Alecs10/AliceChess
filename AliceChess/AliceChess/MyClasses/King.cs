@@ -8,6 +8,8 @@ namespace AliceChess
 {
     class King : Piece
     {
+
+        
         King() { }
         public King(PieceColor col)
         {

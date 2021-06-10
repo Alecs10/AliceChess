@@ -55,23 +55,24 @@ namespace AliceChess
             }
             else // same logic as the above for the white pawns
             {
-                if (!board.Table[row - 1][col].containsPiece()) 
+                if (row-1>=0&&!board.Table[row - 1][col].containsPiece()) 
                 {
                     this.possibleMoves.Add(Tuple.Create(chessTable, row - 1, col));
-                    if (startingPosition == true && !board.Table[row - 2][col].containsPiece()) 
+                    
+                    if (row - 2 >= 0&&startingPosition == true && !board.Table[row - 2][col].containsPiece()) 
                     {
                         this.possibleMoves.Add(Tuple.Create(chessTable, row - 2, col));
                     }
                 }
 
-                if (col != 0 && board.Table[row - 1][col - 1].containsPiece())
+                if (row - 1 >= 0 && col != 0 && board.Table[row - 1][col - 1].containsPiece())
                 {
                     if (board.Table[row - 1][col - 1].Piece.color != this.color)
                     {
                         this.possibleMoves.Add(Tuple.Create(chessTable, row - 1, col - 1));
                     }
                 }
-                if (col != 7 && board.Table[row - 1][col + 1].containsPiece())
+                if (row - 1 >= 0 && col != 7 && board.Table[row - 1][col + 1].containsPiece())
                 {
                     if (board.Table[row - 1][col + 1].Piece.color != this.color)
                     {

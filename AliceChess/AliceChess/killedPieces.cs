@@ -82,17 +82,17 @@ namespace AliceChess
             Game.chessboards[Game.boardTemp == 0 ? 1 : 0].Table[Game.row][Game.col].Piece.col = Game.col;
             Game.chessboards[Game.boardTemp == 0 ? 1 : 0].Table[Game.row][Game.col].LoadImage();
             
-            for(int i=0;i< Game.blackPiecesKilled.Count(); i++)
-            {
-                if (Game.blackPiecesKilled[i].Equals(((Cell)sender).Piece))
-                {
-                    Game.blackPiecesKilled.RemoveAt(i);
-                }
-                if (Game.whitePiecesKilled[i].Equals(((Cell)sender).Piece))
-                {
-                    Game.whitePiecesKilled.RemoveAt(i);
-                }
-            }
+            //for(int i=0;i< Game.blackPiecesKilled.Count(); i++)
+            //{
+            //    if (Game.blackPiecesKilled[i].Equals(((Cell)sender).Piece))
+            //    {
+            //        Game.blackPiecesKilled.RemoveAt(i);
+            //    }
+            //    if (Game.whitePiecesKilled[i].Equals(((Cell)sender).Piece))
+            //    {
+            //        Game.whitePiecesKilled.RemoveAt(i);
+            //    }
+            //}
             this.Close();
         }
 

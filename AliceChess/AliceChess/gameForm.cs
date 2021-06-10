@@ -5,6 +5,7 @@ using System.Data;
 using System.Drawing;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
@@ -137,13 +138,10 @@ namespace AliceChess
                     if (game.checkKings())
                     {
 
-                        if (game.checkKingMate(PieceColor.White) && game.checkKingMate(PieceColor.Black)){
-                            MessageBox.Show("Mat");
-                        }
-                        else
-                        {
-                            MessageBox.Show("Sah" + "King Move " + Game.flagKingMove.ToString() + " Block Piece: " +Game.flagBlockPiece.ToString() +" Take Piece " +  Game.flagTakePiece.ToString());
-                        }
+                        
+                       
+                            MessageBox.Show("Sah");
+                        
                         
                     }
 
@@ -153,20 +151,28 @@ namespace AliceChess
                         EnableClick(game.getPiecesCoordinates(game.currentTurn), false);
                         game.currentTurn = game.currentTurn == PieceColor.White ? PieceColor.Black : PieceColor.White;
                         EnableClick(game.getPiecesCoordinates(game.currentTurn), true);
-                      
+
+                        if (game.isTheGameOver())
+                        {
+                            MessageBox.Show("Game Over! " + (game.whoWon == true? "White": "Black") + " won the game.");
+                            Thread.Sleep(3000);
+                            Application.Exit();
+                        }
                         if (game.checkKings())
                         {
 
-                            if (game.checkKingMate(PieceColor.White) && game.checkKingMate(PieceColor.Black))
-                            {
-                                MessageBox.Show("Mat");
-                            }
-                            else
-                            {
+                            //if (game.checkKingMate(PieceColor.White) && game.checkKingMate(PieceColor.Black))
+                            //{
+                            //    MessageBox.Show("Mat");
+                            //}
+                            //else
+                            //{
                                 MessageBox.Show("Sah" + "King Move " + Game.flagKingMove.ToString() + " Block Piece: " + Game.flagBlockPiece.ToString() + " Take Piece " + Game.flagTakePiece.ToString());
-                            }
+                            //}
 
                         }
+
+
                     }
 
                 }
