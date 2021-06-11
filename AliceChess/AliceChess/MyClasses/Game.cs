@@ -278,8 +278,6 @@ namespace AliceChess
             return null;
         }
 
-
-
         public List<Tuple<int, int, int>> getPiecesCoordinates(PieceColor color)
         {
             List<Tuple<int, int, int>> returnedIndexes = new List<Tuple<int, int, int>>();

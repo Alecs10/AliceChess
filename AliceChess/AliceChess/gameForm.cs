@@ -32,8 +32,6 @@ namespace AliceChess
             EnableClick(game.getPiecesCoordinates(game.currentTurn), true);
         }
 
-
-
         private void InitializeForm()
         {
             this.BackColor = Color.Wheat;
@@ -167,7 +165,7 @@ namespace AliceChess
                             //}
                             //else
                             //{
-                                MessageBox.Show("Sah" + "King Move " + Game.flagKingMove.ToString() + " Block Piece: " + Game.flagBlockPiece.ToString() + " Take Piece " + Game.flagTakePiece.ToString());
+                                MessageBox.Show("Sah");
                             //}
 
                         }
